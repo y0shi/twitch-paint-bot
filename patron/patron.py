@@ -1,6 +1,10 @@
 import time
-import os 
+import os
+import threading
+import queue
 from twitchio.ext import commands
+
+q = queue.Queue()
 
 bot = commands.Bot(
     # set up the bot
@@ -34,20 +38,44 @@ async def event_message(ctx):
 
 @bot.command(name='forward')
 async def forward(ctx):
+    global q
+    q.put((ctx.author.name,'FORWARD'))
     await ctx.channel.send(f"@{ctx.author.name} said go forward.")
 
 @bot.command(name='left')
 async def left(ctx):
+    global q
+    q.put((ctx.author.name,'LEFT'))
     await ctx.channel.send(f"@{ctx.author.name} said turn left.")
 
 @bot.command(name='right')
 async def right(ctx):
+    global q
+    q.put((ctx.author.name,'RIGHT'))
     await ctx.channel.send(f"@{ctx.author.name} said go right.")
+
+def run_twitch_bot():
+    bot.run()
+    
+def process_commands():
+    global q
+    while True:
+        time.sleep(30)
+        print(f'Processor waking up')
+        if q.empty():
+            print("No commands in queue")
+        else:
+            while not q.empty():
+                (user, command) = q.get()
+                print(f'User: {user} Command: {command}')
+            print('Read all commands.')
 
 # bot.py
 if __name__ == "__main__":
-    bot.run()
-    print('After run.')
+    x = threading.Thread(target=run_twitch_bot)
+    y = threading.Thread(target=process_commands)
+    x.start()
+    y.start()
 
 
 
