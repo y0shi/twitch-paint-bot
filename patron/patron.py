@@ -3,6 +3,7 @@ import os
 import threading
 import queue
 from twitchio.ext import commands
+from statistics import mode
 
 q = queue.Queue()
 
@@ -65,10 +66,17 @@ def process_commands():
         if q.empty():
             print("No commands in queue")
         else:
+            votes = {}
             while not q.empty():
-                (user, command) = q.get()
-                print(f'User: {user} Command: {command}')
-            print('Read all commands.')
+                (user, vote) = q.get()
+                print(f'User: {user} Vote: {vote}')
+                #only take the user's first vote
+                if user not in votes:
+                    votes[user] = vote
+            print('Read all votes.')
+            winner = mode(list(votes.values()))
+            print(f'Winner: {winner}')
+
 
 # bot.py
 if __name__ == "__main__":
