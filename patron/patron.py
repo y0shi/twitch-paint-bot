@@ -4,8 +4,15 @@ import threading
 import queue
 from twitchio.ext import commands
 from statistics import mode
+import paho.mqtt.client as mqtt
 
 q = queue.Queue()
+client = mqtt.Client()
+
+host = os.environ['MQ_HOST']
+port = int(os.environ['MQ_PORT'])
+topic = os.environ['MQ_TOPIC']
+
 
 bot = commands.Bot(
     # set up the bot
@@ -16,6 +23,8 @@ bot = commands.Bot(
     prefix=os.environ['BOT_PREFIX'],
     initial_channels=[os.environ['CHANNEL']]
 )
+
+# ---------- TWITCH ---------
 
 @bot.event
 async def event_ready():
@@ -55,11 +64,25 @@ async def right(ctx):
     q.put((ctx.author.name,'RIGHT'))
     await ctx.channel.send(f"@{ctx.author.name} said go right.")
 
+# ------------- MQTT ------------
+
+# The callback for when the client receives a CONNACK response from the server.
+def on_connect(client, userdata, flags, rc):
+    print("Connected with result code "+str(rc))
+
+    # Subscribing in on_connect() means that if we lose the connection and
+    # reconnect then subscriptions will be renewed.
+    # client.subscribe(topic)
+
+# --------------- MAIN ------------
+
+
 def run_twitch_bot():
     bot.run()
     
 def process_commands():
     global q
+    global client
     while True:
         time.sleep(30)
         print(f'Processor waking up')
@@ -76,14 +99,25 @@ def process_commands():
             print('Read all votes.')
             winner = mode(list(votes.values()))
             print(f'Winner: {winner}')
+            client.publish(topic, winner)
+
+def run_messages():
+    global client
+    client.on_connect = on_connect
+    client.connect(host, port, 60)
+    client.loop_forever()
 
 
 # bot.py
 if __name__ == "__main__":
-    x = threading.Thread(target=run_twitch_bot)
-    y = threading.Thread(target=process_commands)
+    
+    x = threading.Thread(target=run_messages)
+    y = threading.Thread(target=run_twitch_bot)
+    z = threading.Thread(target=process_commands)
+
     x.start()
     y.start()
+    z.start()
 
 
 
