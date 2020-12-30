@@ -1,0 +1,17 @@
+aiohttp==3.7.3
+async-timeout==3.0.1
+attrs==20.3.0
+certifi==2020.12.5
+chardet==3.0.4
+colorzero==1.1
+gpiozero==1.5.1
+idna==2.10
+multidict==5.1.0
+paho-mqtt==1.5.1
+python-twitch-client==0.7.1
+requests==2.25.1
+twitchio==1.1.0
+typing-extensions==3.7.4.3
+urllib3==1.26.2
+websockets==8.1
+yarl==1.6.3
