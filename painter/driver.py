@@ -1,8 +1,16 @@
 from gpiozero import Motor
+from gpiozero import OutputDevice
 import time
 
+
+RELAY_PIN = 18
+
+#motors
 motorLeft = Motor(4, 14)
 motorRight = Motor(17, 27)
+
+#paint dispenser
+pumpRelay = OutputDevice(RELAY_PIN, active_high=True, initial_value=False)
 
 DEFAULT_PWR = 0.5
 DEFAULT_PERIOD = 2
@@ -24,8 +32,20 @@ def forward(power=DEFAULT_PWR, period=DEFAULT_PERIOD):
     motorLeft.stop()
     motorRight.stop()
 
-if __name__ == "__main__":
-    turn_left()
-    turn_right()
-    forward()
+def set_relay(status):
+    if status:
+        print("Setting relay: ON")
+        pumpRelay.on()
+    else:
+        print("Setting relay: OFF")
+        pumpRelay.off()
 
+def paint(period=DEFAULT_PERIOD):
+    set_relay(True)
+    time.sleep(period)
+    set_relay(False)
+
+if __name__ == "__main__":
+    while True:
+        paint(5)
+        time.sleep(5)
