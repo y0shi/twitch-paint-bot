@@ -3,11 +3,11 @@ from gpiozero import OutputDevice
 import time
 
 
-RELAY_PIN = 18
+RELAY_PIN = 23
 
 #motors
-motorLeft = Motor(4, 14)
-motorRight = Motor(17, 27)
+motorLeft = Motor(14, 18)
+motorRight = Motor(27, 22)
 
 #paint dispenser
 pumpRelay = OutputDevice(RELAY_PIN, active_high=True, initial_value=False)
