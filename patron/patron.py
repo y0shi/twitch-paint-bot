@@ -2,6 +2,7 @@ import time
 import os
 import threading
 import queue
+import random
 from twitchio.ext import commands
 from statistics import mode
 import paho.mqtt.client as mqtt
@@ -79,15 +80,20 @@ def on_connect(client, userdata, flags, rc):
 
 def run_twitch_bot():
     bot.run()
+
+def random_choice():
+    choices = ['FORWARD','LEFT','RIGHT']
+    return random.choice(choices)
     
 def process_commands():
     global q
     global client
     while True:
         time.sleep(30)
-        print(f'Processor waking up')
         if q.empty():
-            print("No commands in queue")
+            choice = random_choice()
+            print(f'No user input.  Rolling dice. . . {choice}')
+            client.publish(topic, choice)
         else:
             votes = {}
             while not q.empty():
