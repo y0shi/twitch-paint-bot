@@ -7,7 +7,7 @@ RELAY_PIN = 21
 
 #motors
 motorLeft = Motor(26, 20)
-motorRight = Motor(19, 16)
+motorRight = Motor(16, 19)
 
 #paint dispenser
 pumpRelay = OutputDevice(RELAY_PIN, active_high=True, initial_value=False)

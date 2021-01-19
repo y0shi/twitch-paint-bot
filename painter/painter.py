@@ -2,6 +2,7 @@ import time
 import os
 import threading
 import paho.mqtt.client as mqtt
+import driver
 
 host = os.environ['MQ_HOST']
 port = int(os.environ['MQ_PORT'])
@@ -17,7 +18,18 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+    text = msg.payload.decode('utf-8', 'ignore')
+    print(f'Topic {msg.topic} Message: {text}')
+    if text == 'FORWARD':
+        driver.paint()
+        driver.forward()
+    elif text == 'RIGHT':
+        driver.paint()
+        driver.turn_right()
+    elif text == 'LEFT':
+        driver.paint()
+        driver.turn_left()
+
 
 
 if __name__ == "__main__":
