@@ -38,11 +38,12 @@ async def event_ready():
 @bot.event
 async def event_message(ctx):
     'Runs every time a message is sent in chat.'
-    print(f'New message: {ctx}')
-
     # make sure the bot ignores itself and the streamer
-    # if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
-    #     return
+    if ctx.author.name.lower() == os.environ['BOT_NICK'].lower():
+        return
+    print(f'New message from: {ctx.author.name}', flush=True)
+
+
 
     await bot.handle_commands(ctx)
 
@@ -85,20 +86,20 @@ def process_commands():
     global client
     while True:
         time.sleep(30)
-        print(f'Processor waking up')
+        print(f'Processor waking up', flush=True)
         if q.empty():
-            print("No commands in queue")
+            print("No commands in queue", flush=True)
         else:
             votes = {}
             while not q.empty():
                 (user, vote) = q.get()
-                print(f'User: {user} Vote: {vote}')
+                print(f'User: {user} Vote: {vote}', flush=True)
                 #only take the user's first vote
                 if user not in votes:
                     votes[user] = vote
-            print('Read all votes.')
+            print('Read all votes.', flush=True)
             winner = mode(list(votes.values()))
-            print(f'Winner: {winner}')
+            print(f'Winner: {winner}', flush=True)
             client.publish(topic, winner)
 
 def run_messages():
