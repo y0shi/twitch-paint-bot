@@ -1,6 +1,13 @@
 # twitch-paint-bot
+-----
 
-A bot in two acts.
+A bot that paints pictures from your twitch chat.
+
+![Diagram](tpb.png)
+
+-----
+
+![Example](painting.png)
 
 ## Act 1 - The Patron
 

@@ -107,7 +107,11 @@ def process_commands():
                 if user not in votes:
                     votes[user] = vote
             print('Read all votes.', flush=True)
-            winner = mode(list(votes.values()))
+            winner = list(votes.values())[0]
+            try:
+                winner = mode(list(votes.values()))
+            except:
+                pass
             print(f'Winner: {winner}', flush=True)
             client.publish(topic, winner)
 
