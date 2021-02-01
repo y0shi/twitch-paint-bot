@@ -9,29 +9,40 @@ RELAY_PIN = 21
 motorLeft = Motor(26, 20)
 motorRight = Motor(16, 19)
 
+leftPowerFactor = 1.0
+rightPowerFactor = 1.3
+
+def limit(power):
+    if power > 1.0:
+        return 1.0
+    elif power < -1.0:
+        return -1.0
+    else:
+        return power
+
 #paint dispenser
 pumpRelay = OutputDevice(RELAY_PIN, active_high=True, initial_value=False)
 
-DEFAULT_PWR = 0.5
-DEFAULT_PERIOD = 2
+DEFAULT_PWR = 0.3
 
-def turn_left(power=DEFAULT_PWR, period=DEFAULT_PERIOD):
-    motorRight.forward(power)
-    time.sleep(period)
-    motorRight.stop()
+def start_left(power=DEFAULT_PWR, paint=False):
+    set_relay(paint)
+    motorRight.forward(limit(power * rightPowerFactor))
 
-def turn_right(power=DEFAULT_PWR, period=DEFAULT_PERIOD):
-    motorLeft.forward(power)
-    time.sleep(period)
+def start_right(power=DEFAULT_PWR, paint=False):
+    set_relay(paint)
+    motorLeft.forward(limit(power * leftPowerFactor))
+
+def forward(power=DEFAULT_PWR, paint=True):
+    set_relay(paint)
+    motorLeft.forward(limit(power * leftPowerFactor))
+    motorRight.forward(limit(power * rightPowerFactor))
+
+def stop_all():
+    set_relay(False)
     motorLeft.stop()
-
-def forward(power=DEFAULT_PWR, period=DEFAULT_PERIOD):
-    motorLeft.forward(power)
-    motorRight.forward(power)
-    time.sleep(period)
-    motorLeft.stop()
     motorRight.stop()
-
+    
 def set_relay(status):
     if status:
         print("Setting relay: ON")
@@ -40,7 +51,7 @@ def set_relay(status):
         print("Setting relay: OFF")
         pumpRelay.off()
 
-def paint(period=DEFAULT_PERIOD):
+def paint(period=2):
     set_relay(True)
     time.sleep(period)
     set_relay(False)

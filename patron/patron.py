@@ -90,7 +90,7 @@ def process_commands():
     global q
     global client
     while True:
-        time.sleep(30)
+        time.sleep(15)
         print(f'Processor waking up', flush=True)
         # if q.empty():
         #     choice = random_choice()
